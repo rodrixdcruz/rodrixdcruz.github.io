@@ -25,6 +25,34 @@
     --line: rgba(255,255,255,.09); --accent: #38bdf8;
   }
   html { scroll-behavior: smooth; }
+  #top, #projects, #stack, #origins { scroll-margin-top: 96px; }
+
+  nav.topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; gap: 4px;
+    padding: 10px clamp(14px, 4vw, 32px);
+    background: rgba(11,18,32,0); border-bottom: 1px solid transparent;
+    transition: background .25s ease, border-color .25s ease;
+  }
+  nav.topbar.scrolled {
+    background: rgba(11,18,32,.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom-color: var(--line);
+  }
+  nav.topbar .brand {
+    font-weight: 800; font-size: 15px; text-decoration: none;
+    margin-right: auto; display: inline-flex; align-items: center; gap: 8px;
+  }
+  nav.topbar .brand .bdot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+  nav.topbar a.link {
+    font-size: 13px; font-weight: 600; text-decoration: none;
+    color: var(--dim); padding: 7px 13px; border-radius: 999px;
+    transition: color .15s ease, background .15s ease;
+  }
+  nav.topbar a.link:hover { color: var(--ink); background: rgba(255,255,255,.06); }
+  nav.topbar a.link.active { color: #7dd3fc; background: rgba(56,189,248,.12); }
+  @media (max-width: 560px) { nav.topbar a.link { padding: 7px 9px; } nav.topbar .brand span.txt { display: none; } }
   body {
     font-family: "Segoe UI", -apple-system, "Noto Sans", "Noto Sans Devanagari", Arial, sans-serif;
     background: var(--bg); color: var(--ink);
@@ -99,7 +127,15 @@
 </head>
 <body>
 
-<header>
+<nav class="topbar" id="topbar" aria-label="Section navigation">
+  <a class="brand" href="#top"><span class="bdot"></span><span class="txt">Rodrix</span></a>
+  <a class="link" href="#projects">Projects</a>
+  <a class="link" href="#stack">Stack</a>
+  <a class="link" href="#origins">Origins</a>
+  <a class="link" href="https://github.com/rodrixdcruz">GitHub ↗</a>
+</nav>
+
+<header id="top">
   <img class="avatar" src="https://github.com/rodrixdcruz.png" alt="Rodrix's avatar">
   <div>
     <h1>Rodrix</h1>
@@ -113,7 +149,7 @@
 </header>
 
 <main>
-  <div class="section-title">Live projects</div>
+  <div class="section-title" id="projects">Live projects</div>
 
   <a class="project" href="https://weathergpt-web.onrender.com" target="_blank" rel="noopener">
     <img src="weather-gpt.png" alt="WeatherGPT — hyperlocal weather intelligence and disaster decision support" loading="lazy">
@@ -147,7 +183,7 @@
       <span class="cta">▶ Open app</span>
     </div>
   </a>
-  <div class="section-title" style="margin-top:8px">Stack &amp; architecture</div>
+  <div class="section-title" id="stack" style="margin-top:8px">Stack &amp; architecture</div>
 
   <div class="stats">
     <span class="stat"><b>3</b> live apps</span>
@@ -224,7 +260,7 @@
     </div>
   </div>
 
-  <div class="section-title" style="margin-top:8px">Origins</div>
+  <div class="section-title" id="origins" style="margin-top:8px">Origins</div>
 
   <a class="project" href="https://github.com/rodrixdcruz/desktop-tutorial" target="_blank" rel="noopener">
     <img src="desktop-tutorial.png" alt="desktop-tutorial — my first GitHub repository" loading="lazy">
@@ -247,5 +283,40 @@
   <a href="https://github.com/rodrixdcruz">github.com/rodrixdcruz</a>
 </footer>
 
+<script>
+  // Scroll-spy: highlight the nav link of the section in view.
+  (() => {
+    const bar = document.getElementById('topbar');
+    const links = [...bar.querySelectorAll('a.link[href^="#"]')];
+    const sections = links
+      .map(a => document.getElementById(a.getAttribute('href').slice(1)))
+      .filter(Boolean);
+
+    // Solid bar once the page is scrolled.
+    const onScroll = () => bar.classList.toggle('scrolled', window.scrollY > 24);
+    onScroll();
+    addEventListener('scroll', onScroll, { passive: true });
+
+    // Active link follows whichever section's top has most recently passed.
+    const setActive = id =>
+      links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+
+    const observer = new IntersectionObserver(
+      entries => {
+        for (const e of entries) if (e.isIntersecting) setActive(e.target.id);
+      },
+      // A band 64-224px from the viewport top (8%-28%): a section activates
+      // when its title is in the landing zone created by scroll-margin-top,
+      // so anchors work arriving from either direction.
+      { rootMargin: '-8% 0px -72% 0px', threshold: 0 }
+    );
+    sections.forEach(s => observer.observe(s));
+
+    // Clicking a nav link highlights it immediately instead of trailing
+    // behind the smooth scroll.
+    links.forEach(a => a.addEventListener('click', () =>
+      setActive(a.getAttribute('href').slice(1))));
+  })();
+</script>
 </body>
 </html>
