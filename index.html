@@ -117,6 +117,26 @@
   .diagram-wrap svg { display: block; width: 100%; min-width: 860px; height: auto; font-family: inherit; }
   .diagram-note { color: var(--dim); font-size: 13.5px; margin-top: 12px; line-height: 1.55; }
 
+  .status-row {
+    display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
+    padding: 12px 16px; margin-bottom: 18px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    font-size: 13px; color: var(--dim);
+  }
+  .status-row .title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-right: 4px; }
+  .svc { display: inline-flex; align-items: center; gap: 7px; text-decoration: none; color: var(--dim); }
+  .svc:hover { color: var(--ink); }
+  .svc .sdot { width: 9px; height: 9px; border-radius: 50%; background: #64748b; flex: none; }
+  .svc.checking .sdot { animation: pulse 1.2s ease-in-out infinite; }
+  .svc.ok .sdot { background: #4ade80; box-shadow: 0 0 6px rgba(74,222,128,.7); }
+  .svc.slow .sdot { background: #fbbf24; box-shadow: 0 0 6px rgba(251,191,36,.7); animation: pulse 1.2s ease-in-out infinite; }
+  .svc.down .sdot { background: #f87171; }
+  .svc .state { font-weight: 600; }
+  .svc.ok .state { color: #86efac; } .svc.slow .state { color: #fcd34d; } .svc.down .state { color: #fca5a5; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) { .svc .sdot { animation: none !important; } }
+  .status-row .stamp { margin-left: auto; font-size: 11.5px; color: var(--dim); opacity: .8; }
+
   footer {
     max-width: 1060px; margin: 0 auto; padding: 0 24px 56px;
     color: var(--dim); font-size: 14px; display: flex; gap: 18px; flex-wrap: wrap;
@@ -273,6 +293,76 @@
     </div>
   </a>
 </main>
+
+<div class="status-row" role="status" aria-live="polite">
+  <span class="title">Status</span>
+  <a class="svc checking" href="https://weathergpt-web.onrender.com" target="_blank" rel="noopener"
+     data-probe="https://weather-gpt-1-ze0n.onrender.com/health"><i class="sdot"></i>WeatherGPT <span class="state">checking…</span></a>
+  <a class="svc checking" href="https://kisanprofit-web.onrender.com" target="_blank" rel="noopener"
+     data-probe="https://kisanprofit-api.onrender.com/health"><i class="sdot"></i>KisanProfit <span class="state">checking…</span></a>
+  <a class="svc checking" href="https://rodrixdcruz.github.io/cropsmart/" target="_blank" rel="noopener"
+     data-probe="https://rodrixdcruz.github.io/cropsmart/" data-same-origin="1"><i class="sdot"></i>CropSmart <span class="state">checking…</span></a>
+  <span class="stamp" id="status-stamp"></span>
+</div>
+
+<script>
+  // Live status probes. CORS-first (gives a real ok/not-ok); if the API blocks
+  // cross-origin reads, fall back to an opaque no-cors ping that still proves
+  // reachability. A slow/aborted probe shows as "waking…" — Render free-tier
+  // cold starts take 30-50s and must not read as "down".
+  (() => {
+    const stamp = document.getElementById('status-stamp');
+    const set = (el, cls, label) => {
+      el.classList.remove('checking', 'ok', 'slow', 'down');
+      el.classList.add(cls);
+      el.querySelector('.state').textContent = label;
+    };
+
+    const probe = async (url, sameOrigin) => {
+      const started = performance.now();
+      const ac = new AbortController();
+      const timer = setTimeout(() => ac.abort(), 9000);
+      try {
+        if (sameOrigin) {
+          const r = await fetch(url, { cache: 'no-store', signal: ac.signal });
+          return r.ok ? 'ok' : 'down';
+        }
+        try {
+          const r = await fetch(url, { cache: 'no-store', signal: ac.signal });
+          return r.ok ? 'ok' : 'down';
+        } catch (corsErr) {
+          // CORS-blocked responses still prove the server answered — retry opaque.
+          try {
+            await fetch(url, { mode: 'no-cors', cache: 'no-store', signal: ac.signal });
+            return performance.now() - started > 5000 ? 'slow' : 'ok';
+          } catch (opaqueErr) {
+            return opaqueErr.name === 'AbortError' ? 'slow' : 'down';
+          }
+        }
+      } catch (e) {
+        return e.name === 'AbortError' ? 'slow' : 'down';
+      } finally {
+        clearTimeout(timer);
+      }
+    };
+
+    const check = async el => {
+      set(el, 'checking', 'checking…');
+      const state = await probe(el.dataset.probe, el.dataset.sameOrigin === '1');
+      set(el, state, state === 'ok' ? 'live' : state === 'slow' ? 'waking…' : 'down');
+      return state;
+    };
+
+    const all = [...document.querySelectorAll('.svc')];
+    Promise.all(all.map(check)).then(states => {
+      stamp.textContent = 'checked ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      // One quiet retry for anything still waking (Render cold start).
+      all.forEach((el, i) => {
+        if (states[i] === 'slow') setTimeout(() => check(el), 25000);
+      });
+    });
+  })();
+</script>
 
 <footer>
   <span>🌦️ WeatherGPT</span>
