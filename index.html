@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rodrix — Full-Stack Developer · Weather &amp; AgriTech</title>
+<meta name="description" content="Rodrix builds weather intelligence and farming tools that work without a budget — three live apps, zero API bills. FastAPI · React · PostgreSQL.">
+<meta property="og:title" content="Rodrix — Full-Stack Developer">
+<meta property="og:description" content="Three live apps: WeatherGPT (disaster decision support), KisanProfit (farmer profit tracker), CropSmart (AI crop advisory).">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌦️</text></svg>">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --ink: #e8edf2; --dim: #9fb0bd; --bg: #0b1220; --panel: #111a2b;
+    --line: rgba(255,255,255,.09); --accent: #38bdf8;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Segoe UI", -apple-system, "Noto Sans", "Noto Sans Devanagari", Arial, sans-serif;
+    background: var(--bg); color: var(--ink);
+    background-image:
+      radial-gradient(1000px 500px at 85% -10%, rgba(56,189,248,.14), transparent 60%),
+      radial-gradient(900px 500px at -10% 40%, rgba(74,222,128,.10), transparent 60%);
+  }
+  a { color: inherit; }
+
+  header {
+    max-width: 1060px; margin: 0 auto; padding: 96px 24px 40px;
+    display: flex; align-items: center; gap: 28px; flex-wrap: wrap;
+  }
+  .avatar { width: 96px; height: 96px; border-radius: 50%; border: 2px solid var(--line); }
+  h1 { font-size: clamp(30px, 5vw, 44px); font-weight: 800; letter-spacing: -.5px; }
+  .sub { color: var(--dim); font-size: clamp(15px, 2.4vw, 18px); margin-top: 6px; max-width: 640px; }
+  .badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 700; text-decoration: none;
+    padding: 8px 16px; border-radius: 999px;
+    background: rgba(56,189,248,.12); border: 1px solid rgba(56,189,248,.45); color: #7dd3fc;
+  }
+  .badge.green { background: rgba(74,222,128,.10); border-color: rgba(74,222,128,.4); color: #86efac; }
+  .badge.ghost { background: rgba(255,255,255,.05); border-color: var(--line); color: var(--dim); }
+  .badge:hover { filter: brightness(1.2); }
+
+  main { max-width: 1060px; margin: 0 auto; padding: 24px 24px 72px; }
+  .section-title {
+    font-size: 14px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--dim); margin: 44px 0 20px;
+  }
+  .project {
+    display: block; text-decoration: none;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    overflow: hidden; margin-bottom: 28px;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .project:hover { transform: translateY(-3px); border-color: rgba(56,189,248,.5); }
+  .project img { display: block; width: 100%; height: auto; }
+  .project .body { padding: 18px 22px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .project h2 { font-size: 22px; font-weight: 700; }
+  .project p { color: var(--dim); font-size: 15px; margin-top: 4px; flex: 1 1 320px; }
+  .cta {
+    font-size: 14px; font-weight: 700; white-space: nowrap;
+    padding: 10px 18px; border-radius: 10px;
+    background: rgba(56,189,248,.14); border: 1px solid rgba(56,189,248,.45); color: #7dd3fc;
+  }
+  footer {
+    max-width: 1060px; margin: 0 auto; padding: 0 24px 56px;
+    color: var(--dim); font-size: 14px; display: flex; gap: 18px; flex-wrap: wrap;
+  }
+  footer a { color: #7dd3fc; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="avatar" src="https://github.com/rodrixdcruz.png" alt="Rodrix's avatar">
+  <div>
+    <h1>Rodrix</h1>
+    <div class="sub">I build practical tools that help people — weather intelligence, farming tech, and
+      disaster-response software. Three live apps, zero API bills.</div>
+    <div class="badges">
+      <a class="badge" href="https://github.com/rodrixdcruz">GitHub ↗</a>
+      <a class="badge ghost" href="https://github.com/rodrixdcruz?tab=repositories">All repositories ↗</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="section-title">Live projects</div>
+
+  <a class="project" href="https://weathergpt-web.onrender.com" target="_blank" rel="noopener">
+    <img src="weather-gpt.png" alt="WeatherGPT — hyperlocal weather intelligence and disaster decision support" loading="lazy">
+    <div class="body">
+      <div>
+        <h2>WeatherGPT</h2>
+        <p>Hyperlocal weather intelligence &amp; disaster decision support — live risk engine, shelter routing with in-app maps, 3D presenter, judge scenario console.</p>
+      </div>
+      <span class="cta">▶ Open app</span>
+    </div>
+  </a>
+
+  <a class="project" href="https://kisanprofit-web.onrender.com" target="_blank" rel="noopener">
+    <img src="kisanprofit.png" alt="KisanProfit — farmer expense and profit tracker" loading="lazy">
+    <div class="body">
+      <div>
+        <h2>KisanProfit</h2>
+        <p>Know Your Cost. Track Your Crop. Grow Your Profit. — per-crop profit tracking, AI insights, profit simulator, EN / हिन्दी / मराठी.</p>
+      </div>
+      <span class="cta">▶ Open app</span>
+    </div>
+  </a>
+
+  <a class="project" href="https://rodrixdcruz.github.io/cropsmart/" target="_blank" rel="noopener">
+    <img src="cropsmart.png" alt="CropSmart — AI crop advisory for Indian farmers" loading="lazy">
+    <div class="body">
+      <div>
+        <h2>CropSmart</h2>
+        <p>Know what to plant. Know when to sell. — AI advisory, live mandi prices, weather, in four languages. Zero-backend, opens in any browser.</p>
+      </div>
+      <span class="cta">▶ Open app</span>
+    </div>
+  </a>
+</main>
+
+<footer>
+  <span>🌦️ WeatherGPT</span>
+  <span>🌾 KisanProfit</span>
+  <span>🌱 CropSmart</span>
+  <span style="flex:1"></span>
+  <a href="https://github.com/rodrixdcruz">github.com/rodrixdcruz</a>
+</footer>
+
+</body>
+</html>
